@@ -93,6 +93,7 @@ global.upgradeSystemLoader = function() {
 
   // also in ESML, build.js
   var es6RegEx = /(?:^\s*|[}{\(\);,\n]\s*)(import\s+['"]|(import|module)\s+[^"'\(\)\n;]+\s+from\s+['"]|export\s+(\*|\{|default|function|var|const|let|[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*))/;
+  var aliasRegEx = /^\s*export\s*\*\s*from\s*(?:'([^']+)'|"([^"]+)")/;
 
   // module format hint regex
   var formatHintRegEx = /^(\s*(\/\*.*\*\/)|(\/\/[^\n]*))*(["']use strict["'];?)?["']([^'"]+)["'][;\n]/;
@@ -114,8 +115,20 @@ global.upgradeSystemLoader = function() {
 
     // es6 handled by core
     if (format == 'es6' || !format && load.source.match(es6RegEx)) {
-      load.metadata.es6 = true;
-      return systemInstantiate.call(System, load);
+      var match;
+      // alias check is based on a "simple form" only
+      // eg import * from 'jquery';
+      if (match = load.source.match(aliasRegEx))
+        return {
+          deps: [match[1] || match[2]],
+          execute: function(dep) {
+            return System.get(dep);
+          }
+        };
+
+      return loadTraceur().then(function() {
+        return systemInstantiate.call(System, load)
+      });
     }
 
     // if it is shimmed, assume it is a global script
@@ -171,6 +184,22 @@ global.upgradeSystemLoader = function() {
       }
     };
   }
+
+
+  function loadTraceur() {
+    if (global.traceur)
+      return Promise.resolve();
+    var oldSystem = System;
+    return System['import']('traceur', { address: traceurSrc }).then(function(traceur) {
+      // traceur overwrites System
+      global.System = oldSystem;
+    });
+  }
+
+  var curScript = document.getElementsByTagName('script');
+      curScript = curScript[curScript.length - 1];
+  var traceurSrc = curScript.getAttribute('data-traceur-src')
+    || curScript.src.substr(0, curScript.src.lastIndexOf('/') + 1) + 'traceur.js';
 
 })(typeof window != 'undefined' ? window : global);
 /*
