@@ -368,14 +368,14 @@ global.upgradeSystemLoader = function() {
       });
     }
     return systemFetch.apply(this, arguments);
-  }
+  };
 
   var systemLocate = System.locate;
   System.locate = function(load) {
     if (System.bundles[load.name])
       load.metadata.bundle = true;
     return systemLocate.call(this, load);
-  }
+  };
 
   var systemInstantiate = System.instantiate;
   System.instantiate = function(load) {
@@ -390,7 +390,7 @@ global.upgradeSystemLoader = function() {
       };
 
     return systemInstantiate.apply(this, arguments);
-  }
+  };
 
 })();
 /*

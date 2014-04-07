@@ -138,6 +138,7 @@ var oldTests = [
       {
         name: 'Map configuration subpath',
         run: function(complete, err) {
+          System.map['maptest'] = 'tests/map-test';
           System['import']('maptest/sub').then(complete, err)
         },
         confirm: function(m) {
@@ -309,6 +310,7 @@ var oldTests = [
       {
         name: 'Mapping a plugin argument',
         run: function(complete, err) {
+          System.map['coffee'] = 'tests/compiler-plugin';
           System.map['bootstrap'] = 'tests/bootstrap@^3.1.1';
           System.versions['tests/bootstrap'] = '3.1.1';
           System['import']('bootstrap/test.coffee!coffee').then(complete, err);

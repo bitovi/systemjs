@@ -64,7 +64,7 @@ global.upgradeSystemLoader = function() {
   // a variation on System.get that does the __useDefault check
   System.getModule = function(key) {
     return checkUseDefault(System.get(key));  
-  };
+  }
 
   // support the empty module, as a concept
   System.set('@empty', Module({}));
@@ -82,7 +82,7 @@ global.upgradeSystemLoader = function() {
         return checkUseDefault(module);
       });
     });
-  };
+  }
 
   // define exec for custom instan
   System.__exec = function(load) {
@@ -126,6 +126,9 @@ global.upgradeSystemLoader = function() {
   See the AMD, global and CommonJS format extensions for examples.
 */
 (function(global) {
+
+  // a table of instantiating load records
+  var instantiating = {};
 
   System.format = {};
   System.formats = [];
@@ -207,6 +210,10 @@ global.upgradeSystemLoader = function() {
     if (!format || !curFormat)
       throw new TypeError('No format found for ' + (format ? format : load.address));
 
+    console.log("saving", load.name)
+    load.metadata.format = format;
+	instantiating[load.name] = load;
+
     // now invoke format instantiation
     var deps = curFormat.deps(load, global);
 
@@ -219,7 +226,8 @@ global.upgradeSystemLoader = function() {
       deps: deps,
       execute: function() {
         var output = curFormat.execute.call(this, Array.prototype.splice.call(arguments, 0, arguments.length), load, global);
-
+		console.log("deleting", load.name)
+		delete instantiating[load.name];
         if (output instanceof global.Module)
           return output;
         else
@@ -227,6 +235,18 @@ global.upgradeSystemLoader = function() {
       }
     };
   };
+  var systemFormatNormalize = System.normalize;
+  System.normalize = function(name, refererName, refererAdress) {
+  	var load = instantiating[refererName],
+  		format = load && this.format[load.metadata.format],
+  		normalize = format && format.normalize;
+  	if(normalize) {
+  		return normalize.call(this, name, refererName, refererAdress, systemFormatNormalize);
+  	} 
+	return systemFormatNormalize.apply(this, arguments);
+  	
+  };
+
 
 })(typeof window != 'undefined' ? window : global);
 /*
@@ -351,7 +371,7 @@ global.upgradeSystemLoader = function() {
 
         // anonymous modules must only call define once
         if ( !name && defined ) {
-          throw "system.js - multiple anonymous defines for "+name+" module";
+          throw "system.js - multiple anonymous defines for "+ load.name+" module";
         }
         if (!name) {
           defined = true;
@@ -888,14 +908,14 @@ global.upgradeSystemLoader = function() {
       });
     }
     return systemFetch.apply(this, arguments);
-  }
+  };
 
   var systemLocate = System.locate;
   System.locate = function(load) {
     if (System.bundles[load.name])
       load.metadata.bundle = true;
     return systemLocate.call(this, load);
-  }
+  };
 
   var systemInstantiate = System.instantiate;
   System.instantiate = function(load) {
@@ -910,7 +930,7 @@ global.upgradeSystemLoader = function() {
       };
 
     return systemInstantiate.apply(this, arguments);
-  }
+  };
 
 })();
 /*
