@@ -64,7 +64,7 @@ global.upgradeSystemLoader = function() {
   // a variation on System.get that does the __useDefault check
   System.getModule = function(key) {
     return checkUseDefault(System.get(key));  
-  }
+  };
 
   // support the empty module, as a concept
   System.set('@empty', Module({}));
@@ -82,7 +82,7 @@ global.upgradeSystemLoader = function() {
         return checkUseDefault(module);
       });
     });
-  }
+  };
 
   // define exec for custom instan
   System.__exec = function(load) {
@@ -226,7 +226,7 @@ global.upgradeSystemLoader = function() {
           return new global.Module(output && output.__esModule ? output : { __useDefault: true, 'default': output });
       }
     };
-  }
+  };
 
 })(typeof window != 'undefined' ? window : global);
 /*
