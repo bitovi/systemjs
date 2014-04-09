@@ -137,7 +137,7 @@ global.upgradeSystemLoader = function() {
     var curScript = document.getElementsByTagName('script');
     curScript = curScript[curScript.length - 1];
     // set the path to traceur
-    var traceurSrc = curScript.getAttribute('data-traceur-src') || curScript.src.substr(0, curScript.src.lastIndexOf('/') + 1) + 'traceur.js';
+    System.paths['@traceur'] = curScript.getAttribute('data-traceur-src') || curScript.src.substr(0, curScript.src.lastIndexOf('/') + 1) + 'traceur.js';
   }
 
   // also in ESML, build.js
@@ -151,6 +151,7 @@ global.upgradeSystemLoader = function() {
 
   var systemInstantiate = System.instantiate;
   System.instantiate = function(load) {
+    console.log("i")
     var name = load.name || '';
 
     load.source = load.source || '';
@@ -182,7 +183,7 @@ global.upgradeSystemLoader = function() {
     if (format == 'es6' || !format && load.source.match(es6RegEx)) {
       // dynamically load Traceur if necessary
       if (!global.traceur)
-        return System['import']('@traceur', { address: traceurSrc }).then(function() {
+        return System['import']('@traceur').then(function() {
           return systemInstantiate.call(System, load);
         });
       else
@@ -226,7 +227,6 @@ global.upgradeSystemLoader = function() {
       deps: deps,
       execute: function() {
         var output = curFormat.execute.call(this, Array.prototype.splice.call(arguments, 0, arguments.length), load, global);
-		console.log("deleting", load.name)
 		delete instantiating[load.name];
         if (output instanceof global.Module)
           return output;
