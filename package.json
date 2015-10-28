@@ -10,7 +10,7 @@
   "author": "Guy Bedford",
   "license": "MIT",
   "dependencies": {
-    "es6-module-loader": "git://github.com/bitovi/es6-module-loader#v0.16.3-bitovi.5"
+    "es6-module-loader": "git://github.com/stealjs/es6-module-loader#v0.16.3-bitovi.5"
   },
   "devDependencies": {
     "babel-core": "^4.7.16",
