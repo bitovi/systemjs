@@ -1163,9 +1163,6 @@ function cjs(loader) {
         // skip cases like require('" + file + "')
         if (dep.match(/"|'/))
           continue;
-        // trailing slash requires are removed as they don't map mains in SystemJS
-        if (dep[dep.length - 1] == '/')
-          dep = dep.substr(0, dep.length - 1);
         deps.push(dep);
       }
     }
