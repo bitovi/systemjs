@@ -2,6 +2,8 @@
 
 (function(global) {
 
+var isBrowser = typeof window !== "undefined";
+
 QUnit.config.testTimeout = 2000;
 
 QUnit.module("SystemJS");
@@ -224,6 +226,20 @@ asyncTest('AMD detection test with comments', function() {
   }, err);
 });
 
+asyncTest('AMD minified detection with cjs wrapper', function() {
+  System['import']('tests/amd-module-4').then(function(m) {
+    ok(m.amd);
+    start();
+  }, err);
+});
+
+asyncTest('AMD cjs wrapper with comments', function() {
+  System['import']('tests/amd-module-5').then(function(m) {
+    ok(m.amd);
+    start();
+  }, err);
+});
+
 asyncTest('AMD detection test with byte order mark (BOM)', function() {
   System['import']('tests/amd-module-bom').then(function(m) {
     ok(m.amd);
@@ -339,31 +355,12 @@ asyncTest('Loading CJS with format hint', function() {
   }, err);
 });
 
-asyncTest('Versions support', function() {
-  System.versions['tests/versioned'] = '2.0.3';
-  System['import']('tests/versioned@^2.0.3').then(function(m) {
-    ok(m.version == '2.3.4', 'Version not loaded');
-    start();
-  }, err);
-});
-
 asyncTest('Versions 2', function() {
   System['import']('tests/zero@0').then(function(m) {
     ok(m == '0');
     start()
   }, err);
 })
-
-asyncTest('Version with map', function() {
-  System.versions['tests/mvd'] = '2.0.0';
-  System.map['tests/map-version'] = {
-    'tests/mvd': 'tests/mvd@^2.0.0'
-  };
-  System['import']('tests/map-version').then(function(m) {
-    ok(m == 'overridden map version');
-    start();
-  }, err);
-});
 
 asyncTest('Simple compiler Plugin', function() {
   System.map['coffee'] = 'tests/compiler-plugin';
@@ -374,30 +371,11 @@ asyncTest('Simple compiler Plugin', function() {
   }, err);
 });
 
-asyncTest('Versioned plugin', function() {
-  System.versions['tests/versioned-plugin-test'] = '1.2.3';
-  System['import']('tests/versioned-plugin-test/main').then(function(m) {
-    ok(m.output == 'plugin output');
-    ok(m.versionedPlugin == true);
-    start();
-  }, err);
-})
-
 asyncTest('Mapping to a plugin', function() {
   System.map['pluginrequest'] = 'tests/compiled.coffee!';
   System.map['coffee'] = 'tests/compiler-plugin';
   System['import']('pluginrequest').then(function(m) {
     ok(m.extra == 'yay!', 'Plugin not applying.');
-    start();
-  }, err);
-});
-
-asyncTest('Mapping a plugin argument', function() {
-  System.map['bootstrap'] = 'tests/bootstrap@^3.1.1';
-  System.versions['tests/bootstrap'] = '3.1.1';
-  System.map['coffee'] = 'tests/compiler-plugin';
-  System['import']('bootstrap/test.coffee!coffee').then(function(m) {
-    ok(m.extra == 'yay!', 'not working');
     start();
   }, err);
 });
@@ -749,29 +727,31 @@ asyncTest("bundled defines without dependencies", function(){
   });
 });
 
-asyncTest("plugin instantiate hook", function(){
-  var testEl = document.createElement("div");
-  testEl.id = "test-element";
-  document.body.appendChild(testEl);
+if(isBrowser) {
+  asyncTest("plugin instantiate hook", function(){
+    var testEl = document.createElement("div");
+    testEl.id = "test-element";
+    document.body.appendChild(testEl);
 
-  var instantiate = System.instantiate;
-  System.instantiate = function(load){
-    if( load.name.indexOf( "tests/build_types/test.css") === 0 ) {
-      equal(load.metadata.buildType, "css", "buildType set");
-    }
-    return instantiate.apply(this, arguments);
-  };
+    var instantiate = System.instantiate;
+    System.instantiate = function(load){
+      if( load.name.indexOf( "tests/build_types/test.css") === 0 ) {
+        equal(load.metadata.buildType, "css", "buildType set");
+      }
+      return instantiate.apply(this, arguments);
+    };
 
-  System['import']("tests/build_types/test.css!tests/build_types/css").then(function(value){
-    equal(testEl.clientWidth, 200, "style added to the page");
-    document.body.removeChild(testEl);
-    System.instantiate = instantiate;
-    start();
-  }, function(e){
-    ok(false, "got error "+e);
-    start();
+    System['import']("tests/build_types/test.css!tests/build_types/css").then(function(value){
+      equal(testEl.clientWidth, 200, "style added to the page");
+      document.body.removeChild(testEl);
+      System.instantiate = instantiate;
+      start();
+    }, function(e){
+      ok(false, "got error "+e);
+      start();
+    });
   });
-});
+}
 
 asyncTest('AMD simplified CommonJS wrapping with an aliased require', function() {
   System['import']('tests/amd-simplified-cjs-aliased-require1').then(function(m) {
