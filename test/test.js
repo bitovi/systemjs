@@ -49,6 +49,13 @@ asyncTest('Global script loading', function() {
 
 if (!ie8)
 asyncTest('Global script with var syntax', function() {
+  System.config({
+    meta: {
+      'tests/global-single': {
+        eval: 'script'
+      }
+    }
+  });
   System['import']('tests/global-single').then(function(m) {
     ok(m == 'bar', 'Wrong global value');
     start();
@@ -87,7 +94,9 @@ asyncTest('Global script with inline exports', function() {
 });
 
 asyncTest('Global script with shim config', function() {
-  System.meta['tests/global-shim-config'] = { deps: ['./global-shim-config-dep'] };
+  System.meta['tests/global-shim-config'] = {
+    deps: ['./global-shim-config-dep']
+  };
   System['import']('tests/global-shim-config').then(function(m) {
     ok(m == 'shimmed', 'Not shimmed');
     start();
@@ -135,7 +144,9 @@ asyncTest('Support the empty module', function() {
 });
 
 asyncTest('Global script with shim config exports', function() {
-  System.meta['tests/global-shim-config-exports'] = { exports: 'p' };
+  System.meta['tests/global-shim-config-exports'] = {
+    exports: 'p'
+  };
   System['import']('tests/global-shim-config-exports').then(function(m) {
     ok(m == 'export', 'Exports not shimmed');
     start();
