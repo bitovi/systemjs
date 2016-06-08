@@ -26,7 +26,8 @@ var ie8 = typeof navigator != 'undefined' && navigator.appVersion && navigator.a
 
 asyncTest('Error handling', function() {
   System['import']('tests/error-loader').then(err, function(e) {
-    ok(true);
+    var msg = e.message;
+    ok(/ReferenceError/.test(msg), 'Is a ReferenceError');
     start();
   });
 });
