@@ -2421,6 +2421,8 @@ var $__curScript, __eval;
     }
   }
 
+  var errArgs = new Error(0, '_').fileName == '_';
+
   function addToError(err, msg) {
     // parse the stack removing loader code lines for simplification
     if (!err.originalErr) {
