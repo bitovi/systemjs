@@ -1,5 +1,5 @@
 
-START = cat lib/banner.js lib/polyfill-wrapper-start.js > dist/$@.src.js;
+START = cat lib/banner.js lib/polyfill-wrapper-start.js lib/util.js > dist/$@.src.js;
 
 END = cat lib/polyfill-wrapper-end.js >> dist/$@.src.js;
 
