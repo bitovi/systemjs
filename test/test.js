@@ -849,5 +849,31 @@ asyncTest("inferGlobals: false will not attempt to define an export", function()
   });
 });
 
+asyncTest("ES Modules can use {} syntax on CommonJS modules", function(){
+  expect(1);
+  System['import']('tests/modulea').then(function(mod){
+    var def = mod['default'];
+    equal(def, 'foo', 'able to extract from moduleb');
+    start();
+  });
+});
+
+asyncTest("ES Modules can import default from CommonJS modules", function(){
+  expect(1);
+  System['import']('tests/modulec').then(function(mod){
+    var def = mod['default'];
+    equal(def, 'foo', 'able to extract from moduled');
+    start();
+  });
+});
+
+asyncTest("ES Modules can use {} syntax on AMD modules", function(){
+  expect(1);
+  System['import']('tests/modulee').then(function(mod){
+    var def = mod['default'];
+    equal(def, 'bar', 'able to extract from modulef');
+    start();
+  });
+});
 
 })(typeof window == 'undefined' ? global : window);
