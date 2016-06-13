@@ -252,6 +252,27 @@ asyncTest('AMD cjs wrapper with comments', function() {
   }, err);
 });
 
+asyncTest('Not a AMD module', function() {
+  System['import']('tests/not-amd-module').then(function(m) {
+    equal(Object.getOwnPropertyNames(m).length, 0);
+    start();
+  }, err);
+});
+
+asyncTest('Not a AMD module within a if statement', function() {
+  System['import']('tests/not-amd-module2').then(function(m) {
+    equal(Object.getOwnPropertyNames(m).length, 0);
+    start();
+  }, err);
+});
+
+asyncTest('Not a AMD module after javascript keywords', function() {
+  System['import']('tests/not-amd-module3').then(function(m) {
+    equal(Object.getOwnPropertyNames(m).length, 0);
+    start();
+  }, err);
+});
+
 asyncTest('AMD detection test with byte order mark (BOM)', function() {
   System['import']('tests/amd-module-bom').then(function(m) {
     ok(m.amd);

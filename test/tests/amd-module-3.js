@@ -1,4 +1,6 @@
-define([
+/*
+some comment at the beginning
+*/define([
   // with a single-line comment
   './amd-module',
   /* with a multi-line
