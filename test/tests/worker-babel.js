@@ -1,4 +1,4 @@
-importScripts('../../node_modules/es6-module-loader/dist/es6-module-loader.js',
+importScripts('../../node_modules/steal-es6-module-loader/dist/es6-module-loader.js',
               '../../dist/system.js');
 
 System.baseURL = '../';
