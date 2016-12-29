@@ -1859,7 +1859,9 @@ function plugins(loader) {
       // load the plugin module
       // NB ideally should use pluginLoader.load for normalized,
       //    but not currently working for some reason
-      return pluginLoader['import'](pluginName)
+      return pluginLoader['import'](pluginName, {
+        metadata: { importingModuleName: name }
+      })
       .then(function() {
         var plugin = pluginLoader.get(pluginName);
         plugin = plugin['default'] || plugin;
