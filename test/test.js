@@ -897,4 +897,13 @@ asyncTest("ES Modules can use {} syntax on AMD modules", function(){
   });
 });
 
+asyncTest("Using a plugin that is currently being imported", function(){
+  expect(1);
+  System['import']("tests/link-plug1").then(function(mod){
+    console.log('done');
+    equal(mod, 'foo', 'able to load both at the same time');
+    start();
+  }).catch(err => console.log('an error'));
+});
+
 })(typeof window == 'undefined' ? global : window);
