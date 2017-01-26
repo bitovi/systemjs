@@ -906,4 +906,23 @@ asyncTest("Using a plugin that is currently being imported", function(){
   }).catch(err => console.log('an error'));
 });
 
+asyncTest('Globals', function() {
+  System.config({
+    meta: {
+      'tests/with-global-deps': {
+        globals: {
+          '$$$': 'tests/dep'
+        }
+      }
+    }
+  });
+  System['import']('tests/with-global-deps')
+    .then(function(m) {
+      for (var p in m) { ok(false) };
+      ok(true);
+      start();
+    })
+    .then(null, err);
+});
+
 })(typeof window == 'undefined' ? global : window);
