@@ -1261,10 +1261,12 @@ function global(loader) {
     if (!load.metadata.format)
       load.metadata.format = 'global';
 
+
     // add globals as dependencies
-    if (load.metadata.globals) {
-      for (var g in load.metadata.globals) {
-        load.metadata.deps.push(load.metadata.globals[g]);
+    var loadMeta = loader.meta[load.name];
+    if (loadMeta && loadMeta.globals) {
+      for (var g in loadMeta.globals) {
+        load.metadata.deps.push(loadMeta.globals[g]);
       }
     }
 
@@ -1273,10 +1275,11 @@ function global(loader) {
       load.metadata.execute = function(require, exports, module) {
         var globals;
 
-        if (load.metadata.globals) {
+        var loadMeta = loader.meta[load.name];
+        if (loadMeta && loadMeta.globals) {
           globals = {};
-          for (var g in load.metadata.globals)
-            globals[g] = require(load.metadata.globals[g]);
+          for (var g in loadMeta.globals)
+            globals[g] = require(loadMeta.globals[g]);
         }
 
         loader.get('@@global-helpers').prepareGlobal({
