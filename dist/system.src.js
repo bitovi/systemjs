@@ -1412,7 +1412,8 @@ function amd(loader) {
       if(!inLocation(stringLocations, match.index) &&
         !inLocation(commentLocations, match.index)) {
         var dep = match[1].substr(1, match[1].length - 2);
-        deps.push(dep);
+        if(dep)
+          deps.push(dep);
       }
     }
 
