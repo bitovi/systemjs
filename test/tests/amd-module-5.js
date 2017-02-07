@@ -13,6 +13,8 @@ define(function(require, exports, module){
 
   /** require("./something-not-real"); */
 
+  var someString = "hello world require('./in-a-string')";
+
   return {
     amd: true
   };
