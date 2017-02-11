@@ -1,6 +1,9 @@
 SystemJS
 ========
 
+# DEPRECATED
+The SystemJS extension was merged into [StealJS core](https://github.com/stealjs/steal/pull/1053) and this repository will no longer be maintained.
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/systemjs/systemjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 _For upgrading to SystemJS 0.16, see the [ES6 Module Loader 0.16 release upgrade notes for more information](https://github.com/ModuleLoader/es6-module-loader/releases/tag/v0.16.0), or read the updated [Getting Started](#getting-started) guide below._
